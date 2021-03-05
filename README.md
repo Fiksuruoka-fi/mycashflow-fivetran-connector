@@ -6,19 +6,18 @@ Enables ETL process via MCF REST API
 
 See Setup Guide: https://fivetran.com/docs/functions/google-cloud-functions/setup-guide
 
-secrets:
+###secrets:
+{"api_username": "mcf api username", "api_key": "mcf api key"}
 
-{"api_username": "<mcf api username>", "api_key": "<mcf api key>"}
 
+###orders
+####tables:
+orders
+order_row
+shipment
 
-orders:
-    tables:
-        orders
-        order_row
-        shipment
-
-products:
-    tables:
-        product
-        stock_item
-        brand
+###products:
+####tables:
+product
+stock_item
+brand
