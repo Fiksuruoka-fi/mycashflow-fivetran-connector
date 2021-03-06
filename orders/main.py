@@ -1,6 +1,7 @@
 import requests
 import collections
 from flask import jsonify
+import datetime
 
 
 def flatten(d, parent_key='', sep='_'):
@@ -14,6 +15,13 @@ def flatten(d, parent_key='', sep='_'):
     return dict(items)
 
 
+def add_time(timestamp: str, hours: int) -> str:
+    if not timestamp:
+        return timestamp
+    d = datetime.datetime.fromisoformat(timestamp)
+    return (d + datetime.timedelta(hours=hours)).isoformat()
+
+
 def get_orders(updated_at, api_username, api_key) -> tuple:
     url = 'https://halparuoka.mycashflow.fi/api/v0/orders'
     params = {
@@ -24,6 +32,10 @@ def get_orders(updated_at, api_username, api_key) -> tuple:
     if updated_at:
         params['updated_at-from'] = updated_at
     response = requests.get(url, params=params, auth=(api_username, api_key))
+    if response.status_code == requests.codes.internal_server_error:
+        # handles a bug in MCF
+        return {'orders': [], 'order_row': [], 'shipment': []}, add_time(updated_at, 1), True
+    response.raise_for_status()
     data = response.json()['data']
     result = {'orders': [], 'order_row': [], 'shipment': []}
     for d in data:

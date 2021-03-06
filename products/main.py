@@ -33,12 +33,12 @@ def get_data(updated_at, next_page, api_username, api_key) -> tuple:
         data = response.json()['data']
         for d in data:
             if not updated_at or d['updated_at'] > updated_at:
-                if not updated_at or d['stock_item']['updated_at'] > updated_at:
-                    if d['stock_item']:  # sometimes empty list is returned
+                if d['stock_item']:
+                    if not updated_at or d['stock_item']['updated_at'] > updated_at:
                         result['stock_item'].append(d['stock_item'])
                 del d['stock_item']
-                if not updated_at or d['brand']['updated_at'] > updated_at:
-                    if d['brand']:
+                if d['brand']:  # empty list is returned if does not have a brand
+                    if not updated_at or d['brand']['updated_at'] > updated_at:
                         result['brand'].append(d['brand'])
                 del d['brand']
                 result['product'].append(flatten(d))

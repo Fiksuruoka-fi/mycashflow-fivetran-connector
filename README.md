@@ -24,3 +24,11 @@ tables:
 product
 stock_item
 brand
+
+other:
+campaign
+category
+shipping_method
+supplier
+version
+
