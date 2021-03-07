@@ -23,14 +23,14 @@ def handler(request):
     api_username = request_json['secrets']['api_username']
     api_key = request_json['secrets']['api_key']
 
-    def get_data(endpoint, params, api_version='v1'):
+    def get_data(endpoint, params, api_version='v1', updated_at_filter=True):
         return _get_data(
             endpoint,
             params,
             api_username=api_username,
             api_key=api_key,
-            updated_at=request_json['state'].get('updated_at'),
-            api_version=api_version
+            updated_at=request_json['state'].get('updated_at') if updated_at_filter else None,
+            api_version=api_version,
         )
 
     tz = pytz.timezone('Europe/Helsinki')
@@ -41,11 +41,12 @@ def handler(request):
             "updated_at": updated_at,
         },
         "insert": {
-            'campaign': get_data('campaigns', {'page_size': 1000, 'expand': 'prices,visibilities'}, api_version='v0'),
+            'campaign': get_data('campaigns', {'page_size': 1000, 'expand': 'prices,visibilities'},
+                                 api_version='v0', updated_at_filter=False),
             'version': get_data('versions', {}),
             'supplier': get_data('suppliers', {'page_size': 10000}),
             'shipping_method': get_data('shipping-methods', {}),
-            'category': get_data('categories', {'page_size': 1000, 'expand': 'visibilities'})
+            'category': get_data('categories', {'page_size': 1000, 'expand': 'visibilities'}, updated_at_filter=False)
         },
         "schema": {
             "campaign": {
