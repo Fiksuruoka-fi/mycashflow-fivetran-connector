@@ -27,7 +27,7 @@ def get_data(updated_at, next_page, api_username, api_key) -> tuple:
             'page_size': 250,
             'page': next_page,
             'sort': 'id-asc',
-            'expand': 'visibilities,category_links,brand,image_links,stock_item'
+            'expand': 'visibilities,category_links,brand,image_links,stock_item,variations,variations.stock_item'
         }
         response = requests.get(url, params=params, auth=(api_username, api_key))
         data = response.json()['data']
